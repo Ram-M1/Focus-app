@@ -45,7 +45,7 @@
             display: none;
         }
 
-        /* Шапка с логотипом */
+        /* Шапка */
         .section-header {
             display: flex;
             align-items: center;
@@ -83,6 +83,16 @@
         .logo-icon {
             width: 40px;
             height: 40px;
+            cursor: pointer;
+        }
+
+        /* Блоки (для скрытия) */
+        .hideable-block {
+            transition: all 0.3s ease;
+        }
+
+        .hidden-block {
+            display: none;
         }
 
         /* Карточки */
@@ -153,7 +163,7 @@
 
         .wish-card {
             scroll-snap-align: start;
-            min-width: 320px;
+            min-width: 340px;
             background: rgba(0,0,0,0.3);
             border-radius: 20px;
             padding: 12px;
@@ -337,18 +347,6 @@
             margin-top: 6px;
         }
 
-        .habit-stats-btn {
-            background: rgba(255,215,0,0.05);
-            border: 0.5px dashed rgba(255,215,0,0.3);
-            border-radius: 20px;
-            padding: 4px 10px;
-            font-size: 10px;
-            cursor: pointer;
-            display: inline-block;
-            margin-right: 8px;
-            color: #FFD966;
-        }
-
         /* Модалки */
         .modal {
             display: none;
@@ -369,6 +367,8 @@
             width: 300px;
             padding: 20px;
             border: 0.5px solid #FFD966;
+            max-height: 80%;
+            overflow-y: auto;
         }
 
         .modal-title {
@@ -389,6 +389,27 @@
             margin-bottom: 10px;
         }
 
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .calendar-day {
+            text-align: center;
+            padding: 6px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .calendar-day.selected {
+            background: rgba(255,215,0,0.3);
+            color: #FFD966;
+        }
+
         .history-table {
             max-height: 300px;
             overflow-y: auto;
@@ -401,6 +422,36 @@
             padding: 6px;
             border-bottom: 0.5px solid #333;
             font-size: 11px;
+        }
+
+        .toggle-switch {
+            width: 40px;
+            height: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 30px;
+            cursor: pointer;
+            position: relative;
+            margin-left: 8px;
+        }
+
+        .toggle-switch.active {
+            background: rgba(255,215,0,0.4);
+        }
+
+        .toggle-switch::after {
+            content: "";
+            width: 16px;
+            height: 16px;
+            background: #FFD966;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: 0.2s;
+        }
+
+        .toggle-switch.active::after {
+            left: 22px;
         }
 
         /* Слайд-шоу */
@@ -516,7 +567,7 @@
                 <div class="back-btn" onclick="location.href='index.html'">←</div>
                 <div class="section-title">Вера и ритуалы</div>
             </div>
-            <div class="logo-icon">
+            <div class="logo-icon" id="logoBtn">
                 <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="50" cy="50" r="28" stroke="#FFD966" stroke-width="1.2" fill="none" opacity="0.6"/>
                     <circle cx="50" cy="50" r="22" stroke="#FFD966" stroke-width="0.6" fill="none" opacity="0.3"/>
@@ -527,59 +578,69 @@
             </div>
         </div>
 
-        <!-- Благодарность -->
-        <div class="card">
-            <div class="card-title">🙏 Благодарность</div>
-            <textarea class="gratitude-field" id="gratitude1" rows="2" placeholder="За что я благодарен? 1..."></textarea>
-            <textarea class="gratitude-field" id="gratitude2" rows="2" placeholder="2..."></textarea>
-            <textarea class="gratitude-field" id="gratitude3" rows="2" placeholder="3..."></textarea>
-            <div class="inline-group">
-                <div class="small-btn" id="saveGratitudeBtn">💾 Сохранить</div>
-                <div class="small-btn" id="showArchiveBtn">📂 Архив</div>
+        <!-- Блоки для скрытия -->
+        <div id="blocksContainer">
+            <div class="hideable-block" data-block="gratitude">
+                <div class="card">
+                    <div class="card-title">🙏 Благодарность</div>
+                    <textarea class="gratitude-field" id="gratitude1" rows="2" placeholder="За что я благодарен? 1..."></textarea>
+                    <textarea class="gratitude-field" id="gratitude2" rows="2" placeholder="2..."></textarea>
+                    <textarea class="gratitude-field" id="gratitude3" rows="2" placeholder="3..."></textarea>
+                    <div class="inline-group">
+                        <div class="small-btn" id="saveGratitudeBtn">💾 Сохранить</div>
+                        <div class="small-btn" id="showArchiveBtn">📂 Архив</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hideable-block" data-block="wishlist">
+                <div class="card">
+                    <div class="card-title">✨ Карта желаний</div>
+                    <div class="wish-slider" id="wishSlider"></div>
+                    <div class="inline-group">
+                        <div class="small-btn" id="addWishCardBtn">➕ Новая карта</div>
+                        <div class="small-btn" id="showArchiveCardsBtn">📁 Архив карт</div>
+                    </div>
+                    <div class="card-title" style="margin-top: 8px;">🎵 Музыка</div>
+                    <div id="playlistContainer"></div>
+                    <div class="inline-group">
+                        <div class="small-btn" id="addSongBtn">➕ Добавить песню</div>
+                        <div class="small-btn" id="startSlideShowBtn">🎬 Слайд-шоу (2 мин)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hideable-block" data-block="religion">
+                <div class="card">
+                    <div class="card-title">🕊️ Религия</div>
+                    <div class="inline-group">
+                        <select class="religion-select" id="religionSelect" style="flex:1;">
+                            <option value="orthodoxy">Православие</option>
+                            <option value="islam">Ислам</option>
+                            <option value="judaism">Иудаизм</option>
+                            <option value="buddhism">Буддизм</option>
+                            <option value="none">Своё</option>
+                        </select>
+                        <div class="small-btn" id="addReligionBtn" style="margin-bottom:0;">➕ Добавить религию</div>
+                    </div>
+                    <div id="prayersList"></div>
+                    <div class="inline-group">
+                        <div class="small-btn" id="addPrayerBtn">➕ Добавить молитву</div>
+                        <div class="small-btn" id="templeBtn">⛪ Посещение храма</div>
+                        <div class="small-btn" id="prayerScheduleBtn">📿 График молитв</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hideable-block" data-block="habits">
+                <div class="card">
+                    <div class="card-title">🚭 Вредные привычки</div>
+                    <div id="habitsList"></div>
+                    <div class="small-btn" id="addHabitBtn" style="margin-top:4px;">➕ Добавить привычку</div>
+                </div>
             </div>
         </div>
 
-        <!-- Карта желаний + музыка -->
-        <div class="card">
-            <div class="card-title">✨ Карта желаний</div>
-            <div class="wish-slider" id="wishSlider"></div>
-            <div class="inline-group">
-                <div class="small-btn" id="addWishCardBtn">➕ Новая карта</div>
-                <div class="small-btn" id="showArchiveCardsBtn">📁 Архив карт</div>
-            </div>
-            <div class="card-title" style="margin-top: 8px;">🎵 Музыка</div>
-            <div id="playlistContainer"></div>
-            <div class="inline-group">
-                <div class="small-btn" id="addSongBtn">➕ Добавить песню</div>
-                <div class="small-btn" id="startSlideShowBtn">🎬 Слайд-шоу (2 мин)</div>
-            </div>
-        </div>
-
-        <!-- Религия -->
-        <div class="card">
-            <div class="card-title">🕊️ Религия</div>
-            <div class="inline-group">
-                <select class="religion-select" id="religionSelect" style="flex:1;">
-                    <option value="orthodoxy">Православие</option>
-                    <option value="islam">Ислам</option>
-                    <option value="judaism">Иудаизм</option>
-                    <option value="buddhism">Буддизм</option>
-                    <option value="none">Своё</option>
-                </select>
-                <div class="small-btn" id="addReligionBtn" style="margin-bottom:0;">➕ Добавить религию</div>
-            </div>
-            <div id="prayersList"></div>
-            <div class="small-btn" id="addPrayerBtn" style="margin-top:4px;">➕ Добавить свою молитву</div>
-        </div>
-
-        <!-- Вредные привычки -->
-        <div class="card">
-            <div class="card-title">🚭 Вредные привычки</div>
-            <div id="habitsList"></div>
-            <div class="small-btn" id="addHabitBtn" style="margin-top:4px;">➕ Добавить привычку</div>
-        </div>
-
-        <!-- Нижнее меню -->
         <div class="tab-bar">
             <div class="tab-item" onclick="location.href='fokus_progress.html'">
                 <span class="tab-icon">📈</span>
@@ -607,6 +668,9 @@
 <div id="songModal" class="modal"><div class="modal-content"><div class="modal-title">🎵 Добавить песню</div><input type="file" id="songFileInput" accept="audio/*"><div class="small-btn" id="saveSongBtn">Сохранить</div><div class="small-btn" id="closeSongBtn">Отмена</div></div></div>
 <div id="religionModal" class="modal"><div class="modal-content"><div class="modal-title">✨ Добавить религию</div><input type="text" id="newReligionName" placeholder="Название религии"><div class="small-btn" id="saveReligionBtn">Сохранить</div><div class="small-btn" id="closeReligionBtn">Отмена</div></div></div>
 <div id="habitStatsModal" class="modal"><div class="modal-content"><div class="modal-title" id="habitStatsTitle">📊 Статистика</div><div id="habitStatsTable" class="history-table"></div><div class="small-btn" id="closeStatsBtn">Закрыть</div></div></div>
+<div id="hideBlocksModal" class="modal"><div class="modal-content"><div class="modal-title">👁️ Скрыть блоки</div><div id="hideBlocksList"></div><div class="small-btn" id="closeHideBlocksBtn">Закрыть</div></div></div>
+<div id="templeModal" class="modal"><div class="modal-content"><div class="modal-title">⛪ Посещение храма</div><input type="number" id="templeCount" placeholder="Количество посещений" min="1" max="10"><div id="templeCalendarContainer" class="calendar-grid"></div><div class="small-btn" id="saveTempleBtn">Сохранить</div><div class="small-btn" id="closeTempleBtn">Отмена</div></div></div>
+<div id="prayerScheduleModal" class="modal"><div class="modal-content"><div class="modal-title">📿 График молитв</div><input type="number" id="prayerScheduleCount" placeholder="Количество молитв" min="1" max="20"><div id="prayerScheduleList"></div><div class="small-btn" id="savePrayerScheduleBtn">Сохранить</div><div class="small-btn" id="closePrayerScheduleBtn">Отмена</div></div></div>
 
 <!-- Слайд-шоу -->
 <div id="slideShowFullscreen" class="slide-fullscreen">
@@ -623,44 +687,20 @@
     let currentCardId = null;
     let archivedCards = [];
     let songs = [];
-    let prayers = []; // пользовательские молитвы
-    let userReligions = []; // добавленные пользователем религии
+    let prayers = [];
+    let userReligions = [];
     let habits = [];
+    let templeVisits = []; // { date, completed }
+    let prayerSchedule = []; // { date, time, completed, notificationsEnabled }
+    let hiddenBlocks = [];
 
-    // Молитвы по умолчанию для каждой религии
+    // Молитвы по умолчанию
     const defaultPrayers = {
-        orthodoxy: "Господи, Иисусе Христе, Сыне Божий, помилуй мя грешного. Слава Тебе, Господи, слава Тебе. Боже, милостив буди мне грешному.",
-        islam: "Бисмиллахир-Рахманир-Рахим. Альхамдулиллахи раббиль алямин. Ар-Рахманир-Рахим. Малики явмид-дин. Ийяка наъбуду ва ийяка настаъин.",
-        judaism: "Шма Исраэль, Адонай Элохейну, Адонай Эхад. Барух шем квод малхуто леолам ваед. Веахавта эт Адонай Элохеха бехол левавха увхол нафшеха увхол меодеха.",
-        buddhism: "Намо Тасса Бхагавато Арахато Самма Самбуддхасса. Намо Тасса Бхагавато Арахато Самма Самбуддхасса. Намо Тасса Бхагавато Арахато Самма Самбуддхасса."
+        orthodoxy: "Господи, Иисусе Христе, Сыне Божий, помилуй мя грешного. Слава Тебе, Господи, слава Тебе. Боже, милостив буди мне грешному. Пресвятая Богородице, спаси нас. Святии ангели и архангели, молите Бога о нас.",
+        islam: "Бисмиллахир-Рахманир-Рахим. Альхамдулиллахи раббиль алямин. Ар-Рахманир-Рахим. Малики явмид-дин. Ийяка наъбуду ва ийяка настаъин. Ихдинас-сираталь мустакъим. Сираталь лязина анъамта алейхим, гайриль магдуби алейхим ва ляд-даллин.",
+        judaism: "Шма Исраэль, Адонай Элохейну, Адонай Эхад. Барух шем квод малхуто леолам ваед. Веахавта эт Адонай Элохеха бехол левавха увхол нафшеха увхол меодеха. Веhаю гадварим hаэле ашер анoxи мецавеха hайом аль левавеха.",
+        buddhism: "Намо Тасса Бхагавато Арахато Самма Самбуддхасса. Намо Тасса Бхагавато Арахато Самма Самбуддхасса. Намо Тасса Бхагавато Арахато Самма Самбуддхасса. Садху, садху, садху. Буддам саранам гаччхами. Дхаммам саранам гаччхами. Сангхам саранам гаччхами."
     };
-
-    // Функции склонения
-    function declension(num, one, two, five) {
-        let n = Math.abs(num) % 100;
-        if (n >= 11 && n <= 19) return five;
-        n %= 10;
-        if (n === 1) return one;
-        if (n >= 2 && n <= 4) return two;
-        return five;
-    }
-
-    function formatNumberWithWord(num, wordForms) {
-        return `${num} ${declension(num, wordForms[0], wordForms[1], wordForms[2])}`;
-    }
-
-    // Визуализация кружками
-    function renderVisualDots(current, limit) {
-        if (limit > 30) {
-            return `<div style="font-size:12px; color:#FFD966;">${current} / ${limit}</div>`;
-        }
-        let html = '<div class="habit-visual">';
-        for (let i = 0; i < limit; i++) {
-            html += `<div class="habit-dot ${i < current ? 'filled' : ''}"></div>`;
-        }
-        html += '</div>';
-        return html;
-    }
 
     // Сохранение/загрузка
     function loadAll() {
@@ -684,16 +724,22 @@
         prayers = JSON.parse(localStorage.getItem('faith_user_prayers') || '[]');
         userReligions = JSON.parse(localStorage.getItem('faith_user_religions') || '[]');
         habits = JSON.parse(localStorage.getItem('faith_habits_v3') || '[]');
+        templeVisits = JSON.parse(localStorage.getItem('faith_temple_visits') || '[]');
+        prayerSchedule = JSON.parse(localStorage.getItem('faith_prayer_schedule') || '[]');
+        hiddenBlocks = JSON.parse(localStorage.getItem('faith_hidden_blocks') || []);
 
         renderWishSlider();
         renderPlaylist();
         renderPrayers();
         renderReligionSelect();
         renderHabits();
+        renderTempleVisits();
+        renderPrayerSchedule();
+        applyHiddenBlocks();
 
         const savedReligion = localStorage.getItem('faith_selectedReligion');
         if (savedReligion) document.getElementById('religionSelect').value = savedReligion;
-        renderPrayers(); // повтор для обновления молитв
+        renderPrayers();
     }
 
     function saveAll() {
@@ -704,8 +750,59 @@
         localStorage.setItem('faith_user_prayers', JSON.stringify(prayers));
         localStorage.setItem('faith_user_religions', JSON.stringify(userReligions));
         localStorage.setItem('faith_habits_v3', JSON.stringify(habits));
+        localStorage.setItem('faith_temple_visits', JSON.stringify(templeVisits));
+        localStorage.setItem('faith_prayer_schedule', JSON.stringify(prayerSchedule));
+        localStorage.setItem('faith_hidden_blocks', JSON.stringify(hiddenBlocks));
         localStorage.setItem('faith_selectedReligion', document.getElementById('religionSelect').value);
     }
+
+    // Скрытие блоков
+    function applyHiddenBlocks() {
+        document.querySelectorAll('.hideable-block').forEach(block => {
+            const blockName = block.dataset.block;
+            if (hiddenBlocks.includes(blockName)) {
+                block.classList.add('hidden-block');
+            } else {
+                block.classList.remove('hidden-block');
+            }
+        });
+    }
+
+    document.getElementById('logoBtn').onclick = () => {
+        const container = document.getElementById('hideBlocksList');
+        container.innerHTML = '';
+        const blocks = [
+            { name: 'gratitude', title: '🙏 Благодарность' },
+            { name: 'wishlist', title: '✨ Карта желаний и Музыка' },
+            { name: 'religion', title: '🕊️ Религия' },
+            { name: 'habits', title: '🚭 Вредные привычки' }
+        ];
+        blocks.forEach(block => {
+            const div = document.createElement('div');
+            div.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 0.5px solid rgba(255,255,255,0.1);';
+            div.innerHTML = `
+                <span style="color:#fff;">${block.title}</span>
+                <div class="toggle-switch ${hiddenBlocks.includes(block.name) ? '' : 'active'}" data-block="${block.name}"></div>
+            `;
+            container.appendChild(div);
+        });
+        document.querySelectorAll('.toggle-switch').forEach(toggle => {
+            toggle.onclick = (e) => {
+                const blockName = toggle.dataset.block;
+                if (hiddenBlocks.includes(blockName)) {
+                    hiddenBlocks = hiddenBlocks.filter(b => b !== blockName);
+                } else {
+                    hiddenBlocks.push(blockName);
+                }
+                saveAll();
+                applyHiddenBlocks();
+                renderHideBlocksModal();
+                e.stopPropagation();
+            };
+        });
+        document.getElementById('hideBlocksModal').style.display = 'flex';
+    };
+    document.getElementById('closeHideBlocksBtn').onclick = () => document.getElementById('hideBlocksModal').style.display = 'none';
 
     // Религия
     function renderReligionSelect() {
@@ -799,34 +896,205 @@
     document.getElementById('closePrayerBtn').onclick = () => document.getElementById('prayerModal').style.display = 'none';
     document.getElementById('religionSelect').onchange = () => { saveAll(); renderPrayers(); };
 
+    // Посещение храма
+    let selectedTempleDates = [];
+    function renderTempleCalendar() {
+        const container = document.getElementById('templeCalendarContainer');
+        container.innerHTML = '';
+        const year = 2025, month = 5;
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        for (let d = 1; d <= daysInMonth; d++) {
+            const dateStr = `2025-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            const isSelected = selectedTempleDates.includes(dateStr);
+            const dayDiv = document.createElement('div');
+            dayDiv.className = 'calendar-day';
+            if (isSelected) dayDiv.classList.add('selected');
+            dayDiv.innerText = d;
+            dayDiv.onclick = () => {
+                if (selectedTempleDates.includes(dateStr)) {
+                    selectedTempleDates = selectedTempleDates.filter(d => d !== dateStr);
+                } else {
+                    if (selectedTempleDates.length < parseInt(document.getElementById('templeCount').value)) {
+                        selectedTempleDates.push(dateStr);
+                    } else {
+                        alert(`Вы уже выбрали ${selectedTempleDates.length} дат. Увеличьте количество.`);
+                    }
+                }
+                renderTempleCalendar();
+            };
+            container.appendChild(dayDiv);
+        }
+    }
+
+    document.getElementById('templeBtn').onclick = () => {
+        selectedTempleDates = templeVisits.filter(v => !v.completed).map(v => v.date);
+        document.getElementById('templeCount').value = templeVisits.length || 1;
+        renderTempleCalendar();
+        document.getElementById('templeModal').style.display = 'flex';
+    };
+    document.getElementById('saveTempleBtn').onclick = () => {
+        const count = parseInt(document.getElementById('templeCount').value);
+        if (selectedTempleDates.length !== count) {
+            alert(`Выберите ${count} дат. Сейчас выбрано ${selectedTempleDates.length}`);
+            return;
+        }
+        templeVisits = selectedTempleDates.map(date => ({ date, completed: false }));
+        saveAll();
+        renderTempleVisits();
+        document.getElementById('templeModal').style.display = 'none';
+    };
+    document.getElementById('closeTempleBtn').onclick = () => document.getElementById('templeModal').style.display = 'none';
+
+    function renderTempleVisits() {
+        const container = document.getElementById('prayersList');
+        // Добавляем блок статистики храма вниз карточки
+        let statsHtml = `<div style="margin-top: 12px;"><div class="card-title" style="font-size: 14px;">⛪ История посещений</div>`;
+        if (templeVisits.length === 0) statsHtml += '<div style="font-size: 11px; color: #aaa;">Нет запланированных посещений</div>';
+        else {
+            templeVisits.forEach((visit, idx) => {
+                const status = visit.completed ? '✅' : '⭕';
+                statsHtml += `<div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
+                    <span style="font-size: 11px;">${visit.date}</span>
+                    <div><span style="font-size: 14px; cursor: pointer;" onclick="toggleTempleCompletion(${idx})">${status}</span></div>
+                </div>`;
+            });
+        }
+        statsHtml += `<div class="small-btn" id="showTempleStatsBtn" style="margin-top: 6px;">📊 Полная статистика</div></div>`;
+        const existingStats = document.getElementById('templeStatsBlock');
+        if (existingStats) existingStats.remove();
+        const statsDiv = document.createElement('div');
+        statsDiv.id = 'templeStatsBlock';
+        statsDiv.innerHTML = statsHtml;
+        document.getElementById('prayersList').after(statsDiv);
+        document.getElementById('showTempleStatsBtn')?.addEventListener('click', () => {
+            let table = '<div class="history-row"><strong>Дата</strong><strong>Статус</strong></div>';
+            templeVisits.forEach(v => {
+                table += `<div class="history-row"><span>${v.date}</span><span>${v.completed ? '✅ Посетил' : '❌ Не посетил'}</span></div>`;
+            });
+            document.getElementById('habitStatsTable').innerHTML = table;
+            document.getElementById('habitStatsTitle').innerHTML = '📊 Статистика посещений храма';
+            document.getElementById('habitStatsModal').style.display = 'flex';
+        });
+    }
+
+    window.toggleTempleCompletion = (idx) => {
+        templeVisits[idx].completed = !templeVisits[idx].completed;
+        saveAll();
+        renderTempleVisits();
+    };
+
+    // График молитв
+    let prayerScheduleItems = [];
+    function renderPrayerScheduleModal() {
+        const container = document.getElementById('prayerScheduleList');
+        container.innerHTML = '';
+        const count = parseInt(document.getElementById('prayerScheduleCount').value) || 1;
+        for (let i = 0; i < count; i++) {
+            const existing = prayerScheduleItems[i] || { date: '', time: '', notificationsEnabled: true };
+            const div = document.createElement('div');
+            div.style.cssText = 'margin-bottom: 12px; border-bottom: 0.5px solid rgba(255,255,255,0.1); padding-bottom: 8px;';
+            div.innerHTML = `
+                <div style="font-size: 12px; color: #FFD966; margin-bottom: 6px;">Молитва ${i+1}</div>
+                <input type="date" class="prayer-date" data-idx="${i}" value="${existing.date}" style="margin-bottom: 6px;">
+                <input type="time" class="prayer-time" data-idx="${i}" value="${existing.time}" style="margin-bottom: 6px;">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <span style="font-size: 11px; color: #aaa;">🔔 Уведомления</span>
+                    <div class="toggle-switch ${existing.notificationsEnabled ? 'active' : ''}" data-idx="${i}" data-toggle="notify"></div>
+                </div>
+            `;
+            container.appendChild(div);
+        }
+        document.querySelectorAll('.prayer-date').forEach(inp => {
+            inp.onchange = (e) => {
+                const idx = parseInt(inp.dataset.idx);
+                if (!prayerScheduleItems[idx]) prayerScheduleItems[idx] = { notificationsEnabled: true };
+                prayerScheduleItems[idx].date = inp.value;
+            };
+        });
+        document.querySelectorAll('.prayer-time').forEach(inp => {
+            inp.onchange = (e) => {
+                const idx = parseInt(inp.dataset.idx);
+                if (!prayerScheduleItems[idx]) prayerScheduleItems[idx] = { notificationsEnabled: true };
+                prayerScheduleItems[idx].time = inp.value;
+            };
+        });
+        document.querySelectorAll('.toggle-switch[data-toggle="notify"]').forEach(toggle => {
+            toggle.onclick = (e) => {
+                const idx = parseInt(toggle.dataset.idx);
+                if (!prayerScheduleItems[idx]) prayerScheduleItems[idx] = { notificationsEnabled: true };
+                prayerScheduleItems[idx].notificationsEnabled = !prayerScheduleItems[idx].notificationsEnabled;
+                if (prayerScheduleItems[idx].notificationsEnabled) toggle.classList.add('active');
+                else toggle.classList.remove('active');
+                e.stopPropagation();
+            };
+        });
+    }
+
+    document.getElementById('prayerScheduleBtn').onclick = () => {
+        prayerScheduleItems = [...prayerSchedule];
+        document.getElementById('prayerScheduleCount').value = prayerScheduleItems.length || 1;
+        renderPrayerScheduleModal();
+        document.getElementById('prayerScheduleModal').style.display = 'flex';
+    };
+    document.getElementById('savePrayerScheduleBtn').onclick = () => {
+        prayerSchedule = prayerScheduleItems.filter(item => item.date && item.time);
+        saveAll();
+        renderPrayerSchedule();
+        document.getElementById('prayerScheduleModal').style.display = 'none';
+    };
+    document.getElementById('closePrayerScheduleBtn').onclick = () => document.getElementById('prayerScheduleModal').style.display = 'none';
+
+    function renderPrayerSchedule() {
+        const container = document.getElementById('prayersList');
+        let scheduleHtml = `<div style="margin-top: 12px;"><div class="card-title" style="font-size: 14px;">📿 Запланированные молитвы</div>`;
+        if (prayerSchedule.length === 0) scheduleHtml += '<div style="font-size: 11px; color: #aaa;">Нет запланированных молитв</div>';
+        else {
+            prayerSchedule.forEach((p, idx) => {
+                const status = p.completed ? '✅' : '⭕';
+                scheduleHtml += `<div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
+                    <span style="font-size: 11px;">${p.date} ${p.time}</span>
+                    <div><span style="font-size: 14px; cursor: pointer;" onclick="togglePrayerCompletion(${idx})">${status}</span></div>
+                </div>`;
+            });
+        }
+        scheduleHtml += `<div class="small-btn" id="showPrayerStatsBtn" style="margin-top: 6px;">📊 Статистика молитв</div></div>`;
+        const existing = document.getElementById('prayerScheduleBlock');
+        if (existing) existing.remove();
+        const scheduleDiv = document.createElement('div');
+        scheduleDiv.id = 'prayerScheduleBlock';
+        scheduleDiv.innerHTML = scheduleHtml;
+        document.getElementById('prayersList').after(scheduleDiv);
+        document.getElementById('showPrayerStatsBtn')?.addEventListener('click', () => {
+            let table = '<div class="history-row"><strong>Дата/Время</strong><strong>Статус</strong></div>';
+            prayerSchedule.forEach(p => {
+                table += `<div class="history-row"><span>${p.date} ${p.time}</span><span>${p.completed ? '✅ Выполнена' : '❌ Не выполнена'}</span></div>`;
+            });
+            document.getElementById('habitStatsTable').innerHTML = table;
+            document.getElementById('habitStatsTitle').innerHTML = '📊 Статистика молитв';
+            document.getElementById('habitStatsModal').style.display = 'flex';
+        });
+    }
+
+    window.togglePrayerCompletion = (idx) => {
+        prayerSchedule[idx].completed = !prayerSchedule[idx].completed;
+        saveAll();
+        renderPrayerSchedule();
+    };
+
     // Привычки
     function renderHabits() {
         const container = document.getElementById('habitsList');
         container.innerHTML = '';
         habits.forEach(habit => {
-            const currentDate = new Date();
-            const startDate = habit.currentIntervalStart ? new Date(habit.currentIntervalStart) : currentDate;
-            const daysPassed = Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24));
-            const intervalRemaining = Math.max(0, habit.interval - daysPassed);
-            const wordDay = declension(intervalRemaining, 'день', 'дня', 'дней');
-            const limitWord = habit.name === 'Курение' ? 'сигарет' : (habit.name === 'Алкоголь' ? 'бокалов' : 'раз');
-            
-            let visualHtml = '';
-            if (habit.limit <= 30) {
-                visualHtml = '<div class="habit-visual">';
-                for (let i = 0; i < habit.limit; i++) {
-                    visualHtml += `<div class="habit-dot ${i < (habit.current || 0) ? 'filled' : ''}"></div>`;
-                }
-                visualHtml += '</div>';
-            } else {
-                visualHtml = `<div style="font-size:12px; color:#FFD966;">${habit.current || 0} / ${habit.limit}</div>`;
-            }
+            const visualHtml = habit.limit <= 30 ?
+                `<div class="habit-visual">${Array(habit.limit).fill().map((_, i) => `<div class="habit-dot ${i < (habit.current || 0) ? 'filled' : ''}"></div>`).join('')}</div>` :
+                `<div style="font-size:12px; color:#FFD966;">${habit.current || 0} / ${habit.limit}</div>`;
 
             const div = document.createElement('div');
             div.className = 'habit-item';
             div.innerHTML = `
                 <div class="habit-header">
-                    <span class="habit-name">${escapeHtml(habit.name)} (интервал ${habit.interval} ${declension(habit.interval, 'день', 'дня', 'дней')})</span>
+                    <span class="habit-name">${escapeHtml(habit.name)} (интервал ${habit.interval} дн.)</span>
                     <button class="small-btn delete-habit" data-id="${habit.id}" style="padding:2px 8px;">🗑️</button>
                 </div>
                 <div class="habit-controls">
@@ -835,7 +1103,7 @@
                     <button class="habit-btn" data-id="${habit.id}" data-dir="+">+</button>
                 </div>
                 ${visualHtml}
-                <div class="habit-limit">🎯 Лимит: ${habit.limit} ${limitWord}</div>
+                <div class="habit-limit">🎯 Лимит: ${habit.limit}</div>
                 <div class="habit-replace">✨ Заменить на: ${escapeHtml(habit.replace)}</div>
                 <div class="habit-ai-tip" id="tip-${habit.id}"></div>
                 <div class="inline-group" style="margin-top: 6px;">
@@ -845,21 +1113,17 @@
             `;
             container.appendChild(div);
 
-            // ИИ-совет
             const tipDiv = document.getElementById(`tip-${habit.id}`);
             if (tipDiv && habit.limit > 0) {
                 const totalMinutes = habit.interval * 16 * 60;
                 const minutesBetween = totalMinutes / habit.limit;
                 const hours = Math.floor(minutesBetween / 60);
                 const minutes = Math.round(minutesBetween % 60);
-                tipDiv.innerHTML = `🤖 ИИ-совет: перерыв ${hours > 0 ? hours + ' ' + declension(hours, 'час', 'часа', 'часов') + ' ' : ''}${minutes} ${declension(minutes, 'минута', 'минуты', 'минут')}`;
-            } else if (tipDiv) {
-                tipDiv.innerHTML = `🤖 ИИ-совет: лимит 0, отличная работа!`;
-            }
+                tipDiv.innerHTML = `🤖 ИИ-совет: перерыв ${hours > 0 ? hours + ' ч ' : ''}${minutes} мин`;
+            } else if (tipDiv) tipDiv.innerHTML = `🤖 ИИ-совет: лимит 0, отличная работа!`;
         });
 
         document.querySelectorAll('.delete-habit').forEach(btn => btn.onclick = () => { habits = habits.filter(h => h.id != parseInt(btn.dataset.id)); saveAll(); renderHabits(); });
-        
         document.querySelectorAll('.habit-btn[data-dir]').forEach(btn => {
             btn.onclick = () => {
                 const id = parseInt(btn.dataset.id);
@@ -869,16 +1133,13 @@
                     let newVal = (habit.current || 0);
                     if (dir === '+') newVal++;
                     else if (dir === '-' && newVal > 0) newVal--;
-                    if (newVal > habit.limit) {
-                        alert(`⚠️ Вы превышаете лимит (${newVal} из ${habit.limit}). Рекомендую взять контроль над собой!`);
-                    }
+                    if (newVal > habit.limit) alert(`⚠️ Вы превышаете лимит (${newVal} из ${habit.limit}). Рекомендую взять контроль над собой!`);
                     habit.current = newVal;
                     saveAll();
                     renderHabits();
                 }
             };
         });
-
         document.querySelectorAll('.habit-stats-btn').forEach(btn => {
             btn.onclick = () => {
                 const id = parseInt(btn.dataset.id);
@@ -894,20 +1155,16 @@
                 } else alert('Нет данных');
             };
         });
-
         document.querySelectorAll('.fix-day').forEach(btn => {
             btn.onclick = () => {
                 const id = parseInt(btn.dataset.id);
                 const habit = habits.find(h => h.id === id);
                 if (habit) {
-                    const currentVal = habit.current || 0;
                     const startDateStr = habit.currentIntervalStart ? new Date(habit.currentIntervalStart).toLocaleDateString() : new Date().toLocaleDateString();
                     if (!habit.history) habit.history = [];
-                    habit.history.push({ date: startDateStr, limit: habit.limit, value: currentVal });
-                    const newLimit = parseInt(prompt(`📝 Текущий интервал завершён.\nФакт: ${currentVal} из ${habit.limit}\nКакой лимит установить на следующий интервал? (0 = оставить как есть)`, habit.limit));
-                    if (!isNaN(newLimit)) {
-                        habit.limit = newLimit;
-                    }
+                    habit.history.push({ date: startDateStr, limit: habit.limit, value: habit.current || 0 });
+                    const newLimit = parseInt(prompt(`📝 Текущий интервал завершён.\nФакт: ${habit.current || 0} из ${habit.limit}\nКакой лимит установить на следующий интервал?`, habit.limit));
+                    if (!isNaN(newLimit)) habit.limit = newLimit;
                     habit.current = 0;
                     habit.currentIntervalStart = new Date().toISOString();
                     saveAll();
