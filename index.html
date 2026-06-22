@@ -5,12 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>FOCUS — Главная</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Helvetica, Arial, sans-serif;
             background: #0a0a0f;
@@ -21,7 +16,6 @@
             margin: 0;
             padding: 12px;
         }
-
         .phone {
             width: 375px;
             height: 700px;
@@ -32,7 +26,6 @@
             display: flex;
             flex-direction: column;
         }
-
         .screen {
             flex: 1;
             padding: 14px 18px 12px 18px;
@@ -42,7 +35,6 @@
             height: 100%;
             overflow: hidden;
         }
-
         .status-bar {
             display: flex;
             justify-content: space-between;
@@ -52,20 +44,14 @@
             font-weight: 590;
             color: #ececef;
         }
-
         .logo-section {
             display: flex;
             align-items: center;
             gap: 8px;
             margin-bottom: 16px;
+            cursor: pointer;
         }
-
-        .logo-svg {
-            width: 40px;
-            height: 40px;
-            display: block;
-        }
-
+        .logo-svg { width: 40px; height: 40px; display: block; }
         .app-name {
             font-size: 22px;
             font-weight: 700;
@@ -74,52 +60,30 @@
             background-clip: text;
             color: transparent;
         }
-
         .quote-container {
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(255,255,255,0.02);
             border-radius: 16px;
             padding: 8px 12px;
             margin-bottom: 16px;
         }
-
-        .quote-text {
-            font-size: 12px;
-            font-weight: 500;
-            color: #FFD966;
-            line-height: 1.3;
-            margin-bottom: 4px;
-        }
-
-        .quote-author {
-            font-size: 9px;
-            color: #6e6e7e;
-        }
-
+        .quote-text { font-size: 12px; font-weight: 500; color: #FFD966; line-height: 1.3; margin-bottom: 4px; }
+        .quote-author { font-size: 9px; color: #6e6e7e; }
         .focus-grid {
             display: flex;
             flex-direction: column;
             gap: 10px;
             flex: 1;
         }
-
         .focus-tile {
-            background: rgba(30, 30, 42, 0.5);
+            background: rgba(30,30,42,0.5);
             border-radius: 18px;
             padding: 10px 14px;
-            border: 0.5px solid rgba(255, 215, 0, 0.15);
-            transition: all 0.2s ease;
+            border: 0.5px solid rgba(255,215,0,0.15);
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 12px;
         }
-
-        .focus-tile:hover {
-            transform: translateX(5px);
-            border-color: rgba(255, 215, 0, 0.4);
-            background: rgba(255, 215, 0, 0.05);
-        }
-
         .tile-icon {
             font-size: 24px;
             width: 44px;
@@ -127,44 +91,24 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(255, 215, 0, 0.08);
+            background: rgba(255,215,0,0.08);
             border-radius: 14px;
         }
-
-        .tile-info {
-            flex: 1;
-        }
-
-        .tile-title {
-            font-size: 15px;
-            font-weight: 600;
-            color: #fff;
-            margin-bottom: 2px;
-        }
-
-        .tile-subtitle {
-            font-size: 10px;
-            color: #8e8e9e;
-        }
-
-        .tile-arrow {
-            font-size: 16px;
-            color: #FFD966;
-            opacity: 0.5;
-        }
-
+        .tile-info { flex: 1; }
+        .tile-title { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 2px; }
+        .tile-subtitle { font-size: 10px; color: #8e8e9e; }
+        .tile-arrow { font-size: 16px; color: #FFD966; opacity: 0.5; }
         .tab-bar {
             display: flex;
             justify-content: space-around;
             align-items: center;
             padding: 8px 0 6px;
-            background: rgba(18, 18, 24, 0.9);
+            background: rgba(18,18,24,0.9);
             backdrop-filter: blur(20px);
             border-top: 0.5px solid rgba(255,255,255,0.06);
             margin-top: 12px;
             border-radius: 32px;
         }
-
         .tab-item {
             display: flex;
             flex-direction: column;
@@ -177,19 +121,83 @@
             padding: 4px 10px;
             border-radius: 30px;
         }
-
-        .tab-item.active {
-            color: #ffd966;
-            background: rgba(255, 217, 102, 0.1);
-        }
-
-        .tab-icon {
-            font-size: 18px;
-        }
-
-        .screen::-webkit-scrollbar {
+        .tab-item.active { color: #ffd966; background: rgba(255,217,102,0.1); }
+        .tab-icon { font-size: 18px; }
+        .screen::-webkit-scrollbar { display: none; }
+        
+        /* Модалка настроек */
+        .modal {
             display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
         }
+        .modal-content {
+            background: #1a1a24;
+            border-radius: 28px;
+            width: 340px;
+            padding: 20px;
+            border: 0.5px solid #FFD966;
+            max-height: 80%;
+            overflow-y: auto;
+        }
+        .modal-title { font-size: 18px; font-weight: 600; color: #FFD966; margin-bottom: 16px; text-align: center; }
+        .control-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,215,0,0.08);
+            border-radius: 16px;
+            padding: 12px 16px;
+            cursor: pointer;
+            border: 0.5px solid rgba(255,215,0,0.2);
+        }
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 0.5px solid rgba(255,255,255,0.05);
+        }
+        .toggle-switch {
+            width: 44px;
+            height: 22px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 30px;
+            cursor: pointer;
+            position: relative;
+            transition: 0.2s;
+            flex-shrink: 0;
+        }
+        .toggle-switch.active { background: rgba(255,215,0,0.4); }
+        .toggle-switch::after {
+            content: "";
+            width: 18px;
+            height: 18px;
+            background: #FFD966;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 3px;
+            transition: 0.2s;
+        }
+        .toggle-switch.active::after { left: 23px; }
+        .modal-buttons { display: flex; gap: 12px; margin-top: 16px; }
+        .modal-btn {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-radius: 30px;
+            cursor: pointer;
+        }
+        .modal-btn.save { background: rgba(255,215,0,0.15); color: #FFD966; }
+        .modal-btn.cancel { background: rgba(255,255,255,0.1); color: #aaa; }
     </style>
 </head>
 <body>
@@ -197,27 +205,25 @@
         <div class="screen">
             <div class="status-bar">
                 <span class="time">9:41</span>
-                <div class="status-icons">
-                    <span>📶</span> <span>📶</span> <span>🔋</span>
-                </div>
+                <div class="status-icons"><span>📶</span> <span>📶</span> <span>🔋</span></div>
             </div>
 
-            <div class="logo-section">
+            <div class="logo-section" id="logoSection">
                 <div class="logo-svg">
                     <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <g stroke="#FFD966" stroke-width="0.8" stroke-linecap="round" opacity="0.4">
-                            <line x1="50" y1="10" x2="50" y2="20" />
-                            <line x1="50" y1="80" x2="50" y2="90" />
-                            <line x1="10" y1="50" x2="20" y2="50" />
-                            <line x1="80" y1="50" x2="90" y2="50" />
-                            <line x1="22" y1="22" x2="29" y2="29" />
-                            <line x1="71" y1="71" x2="78" y2="78" />
-                            <line x1="22" y1="78" x2="29" y2="71" />
-                            <line x1="71" y1="29" x2="78" y2="22" />
+                            <line x1="50" y1="10" x2="50" y2="20"/>
+                            <line x1="50" y1="80" x2="50" y2="90"/>
+                            <line x1="10" y1="50" x2="20" y2="50"/>
+                            <line x1="80" y1="50" x2="90" y2="50"/>
+                            <line x1="22" y1="22" x2="29" y2="29"/>
+                            <line x1="71" y1="71" x2="78" y2="78"/>
+                            <line x1="22" y1="78" x2="29" y2="71"/>
+                            <line x1="71" y1="29" x2="78" y2="22"/>
                         </g>
                         <g fill="#FFD966" opacity="0.7">
-                            <path d="M68 18 L70 23 L75 23 L71 27 L73 32 L68 29 L63 32 L65 27 L61 23 L66 23 Z" />
-                            <path d="M20 25 L21 28 L24 28 L22 30 L23 33 L20 31 L17 33 L18 30 L16 28 L19 28 Z" />
+                            <path d="M68 18 L70 23 L75 23 L71 27 L73 32 L68 29 L63 32 L65 27 L61 23 L66 23 Z"/>
+                            <path d="M20 25 L21 28 L24 28 L22 30 L23 33 L20 31 L17 33 L18 30 L16 28 L19 28 Z"/>
                         </g>
                         <circle cx="50" cy="50" r="28" stroke="#FFD966" stroke-width="1.2" fill="none" opacity="0.6"/>
                         <circle cx="50" cy="50" r="22" stroke="#FFD966" stroke-width="0.6" fill="none" opacity="0.3"/>
@@ -234,8 +240,8 @@
                 <div class="quote-author" id="quoteAuthor"></div>
             </div>
 
-            <div class="focus-grid">
-                <div class="focus-tile" onclick="location.href='fokus_body.html'">
+            <div class="focus-grid" id="focusGrid">
+                <div class="focus-tile" data-sphere="body" onclick="location.href='fokus_body.html'">
                     <div class="tile-icon">💪</div>
                     <div class="tile-info">
                         <div class="tile-title">Физическое тело</div>
@@ -244,7 +250,7 @@
                     <div class="tile-arrow">→</div>
                 </div>
 
-                <div class="focus-tile" onclick="location.href='fokus_mental.html'">
+                <div class="focus-tile" data-sphere="mental" onclick="location.href='fokus_mental.html'">
                     <div class="tile-icon">🧠</div>
                     <div class="tile-info">
                         <div class="tile-title">Ментальное здоровье</div>
@@ -253,7 +259,7 @@
                     <div class="tile-arrow">→</div>
                 </div>
 
-                <div class="focus-tile" onclick="location.href='fokus_energy.html'">
+                <div class="focus-tile" data-sphere="energy" onclick="location.href='fokus_energy.html'">
                     <div class="tile-icon">⚡</div>
                     <div class="tile-info">
                         <div class="tile-title">Энергия</div>
@@ -262,7 +268,7 @@
                     <div class="tile-arrow">→</div>
                 </div>
 
-                <div class="focus-tile" onclick="location.href='fokus_relationships.html'">
+                <div class="focus-tile" data-sphere="relations" onclick="location.href='fokus_relationships.html'">
                     <div class="tile-icon">👥</div>
                     <div class="tile-info">
                         <div class="tile-title">Отношения</div>
@@ -271,7 +277,7 @@
                     <div class="tile-arrow">→</div>
                 </div>
 
-                <div class="focus-tile" onclick="location.href='fokus_faith.html'">
+                <div class="focus-tile" data-sphere="faith" onclick="location.href='fokus_faith.html'">
                     <div class="tile-icon">🔥</div>
                     <div class="tile-info">
                         <div class="tile-title">Вера и ритуалы</div>
@@ -280,7 +286,7 @@
                     <div class="tile-arrow">→</div>
                 </div>
 
-                <div class="focus-tile" onclick="location.href='fokus_reward.html'">
+                <div class="focus-tile" data-sphere="reward" onclick="location.href='fokus_reward.html'">
                     <div class="tile-icon">🎁</div>
                     <div class="tile-info">
                         <div class="tile-title">Поощрение</div>
@@ -291,18 +297,39 @@
             </div>
 
             <div class="tab-bar">
-                <div class="tab-item" onclick="location.href='fokus_progress.html'">
-                    <span class="tab-icon">📈</span>
-                    <span>Прогресс</span>
+                <div class="tab-item" onclick="location.href='fokus_progress.html'"><span class="tab-icon">📈</span><span>Прогресс</span></div>
+                <div class="tab-item" onclick="location.href='dashboard.html'"><span class="tab-icon">🎯</span><span>ЛК</span></div>
+                <div class="tab-item" onclick="location.href='fokus_profile.html'"><span class="tab-icon">👤</span><span>Профиль</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка настроек -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">⚙️ Настройки экрана</div>
+            
+            <div class="control-option" id="controlOption" onclick="location.href='control.html'">
+                <div>
+                    <div style="font-weight: 600; color: #FFD966;">🔐 Родительский контроль</div>
+                    <div style="font-size: 11px; color: #8e8e9e;">Управление подконтрольными</div>
                 </div>
-                <div class="tab-item" onclick="location.href='dashboard.html'">
-                    <span class="tab-icon">🎯</span>
-                    <span>ЛК</span>
-                </div>
-                <div class="tab-item" onclick="location.href='fokus_profile.html'">
-                    <span class="tab-icon">👤</span>
-                    <span>Профиль</span>
-                </div>
+                <div style="font-size: 18px; color: #FFD966;">→</div>
+            </div>
+            
+            <div style="border-bottom: 0.5px solid rgba(255,215,0,0.2); margin: 12px 0;"></div>
+            <div style="margin-bottom: 12px; font-size: 14px; color: #aaa;">🧩 Активные разделы</div>
+            
+            <div class="setting-item"><span style="color:#fff;">💪 Физическое тело</span><div class="toggle-switch active" data-sphere="body"></div></div>
+            <div class="setting-item"><span style="color:#fff;">🧠 Ментальное здоровье</span><div class="toggle-switch active" data-sphere="mental"></div></div>
+            <div class="setting-item"><span style="color:#fff;">⚡ Энергия</span><div class="toggle-switch active" data-sphere="energy"></div></div>
+            <div class="setting-item"><span style="color:#fff;">👥 Отношения</span><div class="toggle-switch active" data-sphere="relations"></div></div>
+            <div class="setting-item"><span style="color:#fff;">🔥 Вера и ритуалы</span><div class="toggle-switch active" data-sphere="faith"></div></div>
+            <div class="setting-item"><span style="color:#fff;">🎁 Поощрение</span><div class="toggle-switch active" data-sphere="reward"></div></div>
+            
+            <div class="modal-buttons">
+                <div class="modal-btn save" id="resetSpheresBtn">🔄 Сбросить все</div>
+                <div class="modal-btn cancel" id="closeSettingsBtn">❌ Закрыть</div>
             </div>
         </div>
     </div>
@@ -323,7 +350,99 @@
             document.getElementById('quoteAuthor').innerHTML = quote.author;
         }
 
+        // ========== НАСТРОЙКИ СФЕР ==========
+        function loadSphereSettings() {
+            const saved = localStorage.getItem('focus_active_spheres');
+            const defaultSpheres = ['body', 'mental', 'energy', 'relations', 'faith', 'reward'];
+            let active = defaultSpheres;
+            if (saved) {
+                try {
+                    active = JSON.parse(saved);
+                } catch(e) {}
+            }
+            document.querySelectorAll('.toggle-switch[data-sphere]').forEach(toggle => {
+                const sphere = toggle.dataset.sphere;
+                if (active.includes(sphere)) {
+                    toggle.classList.add('active');
+                } else {
+                    toggle.classList.remove('active');
+                }
+            });
+            applySphereVisibility();
+        }
+
+        function saveSphereSettings() {
+            const active = [];
+            document.querySelectorAll('.toggle-switch[data-sphere]').forEach(toggle => {
+                if (toggle.classList.contains('active')) {
+                    active.push(toggle.dataset.sphere);
+                }
+            });
+            localStorage.setItem('focus_active_spheres', JSON.stringify(active));
+            applySphereVisibility();
+        }
+
+        function applySphereVisibility() {
+            const saved = localStorage.getItem('focus_active_spheres');
+            let active = ['body', 'mental', 'energy', 'relations', 'faith', 'reward'];
+            if (saved) {
+                try {
+                    active = JSON.parse(saved);
+                } catch(e) {}
+            }
+            document.querySelectorAll('.focus-tile[data-sphere]').forEach(tile => {
+                const sphere = tile.dataset.sphere;
+                if (active.includes(sphere)) {
+                    tile.style.display = 'flex';
+                } else {
+                    tile.style.display = 'none';
+                }
+            });
+        }
+
+        // ========== ОБРАБОТЧИКИ ==========
+        document.getElementById('logoSection').addEventListener('click', function(e) {
+            // Проверяем подписку для родительского контроля
+            const subscription = localStorage.getItem('focus_subscription');
+            const controlledBy = localStorage.getItem('focus_controlled_by');
+            const controlOption = document.getElementById('controlOption');
+            if (subscription === 'elite' && !controlledBy) {
+                controlOption.style.display = 'flex';
+            } else {
+                controlOption.style.display = 'none';
+            }
+            document.getElementById('settingsModal').style.display = 'flex';
+        });
+
+        document.querySelectorAll('.toggle-switch[data-sphere]').forEach(toggle => {
+            toggle.addEventListener('click', function(e) {
+                this.classList.toggle('active');
+                saveSphereSettings();
+                e.stopPropagation();
+            });
+        });
+
+        document.getElementById('resetSpheresBtn').addEventListener('click', function() {
+            document.querySelectorAll('.toggle-switch[data-sphere]').forEach(toggle => {
+                toggle.classList.add('active');
+            });
+            saveSphereSettings();
+            alert('Все сферы восстановлены');
+        });
+
+        document.getElementById('closeSettingsBtn').addEventListener('click', function() {
+            document.getElementById('settingsModal').style.display = 'none';
+        });
+
+        // Закрытие по клику вне модалки
+        document.getElementById('settingsModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.style.display = 'none';
+            }
+        });
+
         showRandomQuote();
+        loadSphereSettings();
     </script>
 </body>
 </html>
